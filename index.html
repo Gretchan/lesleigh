@@ -2,50 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>You, Me & The Moon</title>
   <style>
     :root {
-      --bg-1: #030716;
-      --bg-2: #07103b;
-      --bg-3: #0f1a57;
+      --bg-1: #020611;
+      --bg-2: #071238;
+      --bg-3: #101d5d;
       --moon: #f7f2e8;
-      --moon-glow: rgba(255, 244, 214, 0.3);
+      --moon-glow: rgba(255, 244, 214, 0.28);
       --star: #fff6d8;
       --text: #f6f4ff;
-      --muted: #c7c3df;
-      --card: rgba(11, 17, 43, 0.8);
+      --muted: #c9c5df;
+      --card: rgba(10, 16, 42, 0.84);
       --border: rgba(255, 255, 255, 0.12);
-      --accent: #d9d0ff;
-      --accent-2: #8fb8ff;
+      --accent: #ddd5ff;
+      --shadow: rgba(0, 0, 0, 0.4);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
     html, body {
       width: 100%;
       min-height: 100%;
       overflow-x: hidden;
-    }
-
-    body {
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
       background:
         radial-gradient(circle at 20% 10%, rgba(143, 184, 255, 0.08), transparent 30%),
         radial-gradient(circle at 80% 0%, rgba(217, 208, 255, 0.06), transparent 28%),
         radial-gradient(circle at 50% 100%, rgba(70, 90, 180, 0.12), transparent 30%),
-        linear-gradient(180deg, var(--bg-3), var(--bg-2) 38%, var(--bg-1) 100%);
+        linear-gradient(180deg, var(--bg-3), var(--bg-2) 40%, var(--bg-1) 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      position: relative;
     }
 
     .sky {
       position: relative;
       width: 100vw;
-      min-height: 100vh;
+      min-height: 100svh;
       overflow: hidden;
       isolation: isolate;
     }
@@ -66,12 +68,23 @@
       transition: transform 0.12s linear;
     }
 
+    .tiny-stars span {
+      position: absolute;
+      display: block;
+      width: 2px;
+      height: 2px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.78);
+      animation: tinyTwinkle 3.8s ease-in-out infinite;
+      z-index: 1;
+    }
+
     .moon {
       position: absolute;
-      top: 8vh;
-      right: 8vw;
-      width: 150px;
-      height: 150px;
+      top: 7svh;
+      right: 7vw;
+      width: 128px;
+      height: 128px;
       border-radius: 50%;
       background: radial-gradient(circle at 35% 35%, #fffdf9 0%, var(--moon) 58%, #d8d1c3 100%);
       box-shadow:
@@ -97,23 +110,23 @@
     .title {
       position: absolute;
       left: 50%;
-      top: 8vh;
+      top: 6svh;
       transform: translateX(-50%);
       text-align: center;
       z-index: 4;
-      padding: 0 20px;
-      width: min(90vw, 900px);
+      padding: 0 18px;
+      width: min(94vw, 800px);
     }
 
     .title .eyebrow {
       display: inline-block;
-      margin-bottom: 12px;
-      padding: 7px 14px;
+      margin-bottom: 10px;
+      padding: 7px 13px;
       border-radius: 999px;
       background: rgba(255,255,255,0.07);
       border: 1px solid rgba(255,255,255,0.08);
       color: var(--accent);
-      font-size: 0.85rem;
+      font-size: 0.78rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       backdrop-filter: blur(8px);
@@ -121,43 +134,20 @@
 
     .title h1 {
       font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(2.3rem, 5vw, 4.5rem);
+      font-size: clamp(2rem, 8vw, 4.2rem);
       font-weight: 500;
       letter-spacing: 0.03em;
       margin-bottom: 10px;
       text-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
+      line-height: 1.05;
     }
 
     .title p {
       color: var(--muted);
-      font-size: clamp(1rem, 1.8vw, 1.2rem);
-      max-width: 700px;
+      font-size: clamp(0.96rem, 3.7vw, 1.15rem);
+      max-width: 620px;
       margin: 0 auto;
-    }
-
-    .hint {
-      position: absolute;
-      left: 50%;
-      bottom: 20px;
-      transform: translateX(-50%);
-      color: rgba(246, 244, 255, 0.78);
-      font-size: 0.95rem;
-      z-index: 5;
-      letter-spacing: 0.02em;
-      animation: pulseText 2.8s ease-in-out infinite;
-      padding: 0 18px;
-      text-align: center;
-    }
-
-    .tiny-stars span {
-      position: absolute;
-      display: block;
-      width: 2px;
-      height: 2px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.75);
-      animation: tinyTwinkle 3.8s ease-in-out infinite;
-      z-index: 1;
+      line-height: 1.45;
     }
 
     .line {
@@ -173,8 +163,8 @@
 
     .star {
       position: absolute;
-      width: 18px;
-      height: 18px;
+      width: 24px;
+      height: 24px;
       border: 0;
       border-radius: 50%;
       background: radial-gradient(circle, #fff 0%, var(--star) 42%, rgba(255,246,214,0.2) 68%, transparent 72%);
@@ -188,8 +178,9 @@
     }
 
     .star:hover,
-    .star:focus-visible {
-      transform: scale(1.45);
+    .star:focus-visible,
+    .star:active {
+      transform: scale(1.35);
       filter: brightness(1.25);
       box-shadow:
         0 0 14px rgba(255,255,255,0.95),
@@ -210,21 +201,36 @@
 
     .star::before {
       width: 2px;
-      height: 24px;
+      height: 28px;
     }
 
     .star::after {
-      width: 24px;
+      width: 28px;
       height: 2px;
     }
 
     .star.special {
-      width: 22px;
-      height: 22px;
+      width: 26px;
+      height: 26px;
       background: radial-gradient(circle, #fff 0%, #ece5ff 42%, rgba(143,184,255,0.28) 72%, transparent 76%);
       box-shadow:
         0 0 14px rgba(217, 208, 255, 0.95),
         0 0 32px rgba(143, 184, 255, 0.4);
+    }
+
+    .moon-secret {
+      position: absolute;
+      top: 12svh;
+      right: 18vw;
+      opacity: 0;
+      transform: scale(0.7);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+      z-index: 4;
+    }
+
+    .moon-secret.show {
+      opacity: 1;
+      transform: scale(1);
     }
 
     .shooting-star {
@@ -254,34 +260,20 @@
       animation: sparkleBurst 700ms ease-out forwards;
     }
 
-    .moon-secret {
-      position: absolute;
-      top: 13vh;
-      right: 16vw;
-      opacity: 0;
-      transform: scale(0.7);
-      transition: opacity 0.45s ease, transform 0.45s ease;
-      z-index: 4;
-    }
-
-    .moon-secret.show {
-      opacity: 1;
-      transform: scale(1);
-    }
-
     .photo-rail {
       position: absolute;
       left: 50%;
-      bottom: 74px;
+      bottom: calc(20px + env(safe-area-inset-bottom));
       transform: translateX(-50%);
-      width: min(92vw, 1080px);
+      width: min(96vw, 1100px);
       display: flex;
-      gap: 14px;
-      padding: 10px 6px 4px;
+      gap: 10px;
+      padding: 8px 6px 4px;
       overflow-x: auto;
       overflow-y: hidden;
       z-index: 5;
       scrollbar-width: none;
+      scroll-snap-type: x proximity;
     }
 
     .photo-rail::-webkit-scrollbar {
@@ -289,8 +281,9 @@
     }
 
     .memory-card {
-      flex: 0 0 150px;
-      border-radius: 18px;
+      flex: 0 0 110px;
+      scroll-snap-align: start;
+      border-radius: 16px;
       overflow: hidden;
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.08);
@@ -304,40 +297,57 @@
     .memory-card:nth-child(2n) { animation-duration: 7.5s; }
     .memory-card:nth-child(3n) { animation-duration: 8.5s; }
 
+    .memory-card:active,
     .memory-card:hover {
-      transform: translateY(-8px) scale(1.03);
+      transform: translateY(-6px) scale(1.02);
       border-color: rgba(255,255,255,0.18);
     }
 
     .memory-card img {
       display: block;
       width: 100%;
-      height: 200px;
+      height: 138px;
       object-fit: cover;
       filter: grayscale(1) brightness(0.78) contrast(1.06) saturate(0.65);
       transition: filter 0.35s ease, transform 0.35s ease;
     }
 
-    .memory-card:hover img {
-      filter: grayscale(0.15) brightness(0.95) contrast(1.03) saturate(0.95);
+    .memory-card:hover img,
+    .memory-card:active img {
+      filter: grayscale(0.12) brightness(0.96) contrast(1.03) saturate(0.95);
       transform: scale(1.04);
     }
 
     .memory-card .caption {
-      padding: 10px 12px 12px;
+      padding: 9px 10px 11px;
       color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.3;
+    }
+
+    .hint {
+      position: absolute;
+      left: 50%;
+      bottom: calc(190px + env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      color: rgba(246, 244, 255, 0.8);
       font-size: 0.88rem;
-      line-height: 1.35;
+      z-index: 5;
+      letter-spacing: 0.02em;
+      animation: pulseText 2.8s ease-in-out infinite;
+      padding: 0 16px;
+      text-align: center;
+      width: 90vw;
     }
 
     .overlay {
       position: fixed;
       inset: 0;
-      background: rgba(2, 4, 12, 0.68);
+      background: rgba(2, 4, 12, 0.72);
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 16px;
       z-index: 50;
       backdrop-filter: blur(10px);
     }
@@ -349,21 +359,23 @@
 
     .card {
       width: min(94vw, 880px);
+      max-height: min(88svh, 860px);
+      overflow: auto;
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 26px;
-      padding: 24px;
+      border-radius: 24px;
+      padding: 18px;
       box-shadow: 0 24px 80px rgba(0, 0, 0, 0.48);
       position: relative;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 22px;
-      align-items: center;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      align-items: start;
     }
 
     .card-media {
-      min-height: 360px;
-      border-radius: 20px;
+      min-height: 240px;
+      border-radius: 18px;
       overflow: hidden;
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.08);
@@ -374,7 +386,7 @@
       height: 100%;
       display: block;
       object-fit: cover;
-      filter: grayscale(0.35) brightness(0.9) contrast(1.05);
+      filter: grayscale(0.3) brightness(0.9) contrast(1.05);
       transition: filter 0.35s ease, transform 0.35s ease;
     }
 
@@ -385,41 +397,41 @@
 
     .card-copy .tag {
       display: inline-block;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       padding: 6px 12px;
       border-radius: 999px;
       background: rgba(255,255,255,0.08);
       color: var(--accent);
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       letter-spacing: 0.03em;
     }
 
     .card-copy h2 {
       font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(1.6rem, 2.8vw, 2.3rem);
+      font-size: clamp(1.45rem, 6vw, 2.2rem);
       font-weight: 500;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       color: #fff;
-      line-height: 1.1;
+      line-height: 1.08;
     }
 
     .card-copy p {
-      font-size: 1.02rem;
+      font-size: 0.99rem;
       line-height: 1.75;
       color: #efeaff;
       white-space: pre-line;
     }
 
     .footer-note {
-      margin-top: 18px;
+      margin-top: 16px;
       color: #bcb5d8;
-      font-size: 0.92rem;
+      font-size: 0.88rem;
     }
 
     .close {
-      position: absolute;
-      top: 14px;
-      right: 14px;
+      position: sticky;
+      top: 0;
+      margin-left: auto;
       border: 0;
       width: 40px;
       height: 40px;
@@ -429,6 +441,7 @@
       color: white;
       background: rgba(255,255,255,0.08);
       z-index: 3;
+      display: block;
     }
 
     .close:hover {
@@ -462,7 +475,7 @@
 
     @keyframes drift {
       0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-6px); }
+      50% { transform: translateY(-5px); }
     }
 
     @keyframes shoot {
@@ -501,52 +514,49 @@
       }
     }
 
-    @media (max-width: 900px) {
-      .card {
-        grid-template-columns: 1fr;
+    @media (min-width: 760px) {
+      .moon {
+        width: 150px;
+        height: 150px;
       }
 
-      .card-media {
-        min-height: 280px;
+      .star {
+        width: 20px;
+        height: 20px;
+      }
+
+      .star::before {
+        height: 24px;
+      }
+
+      .star::after {
+        width: 24px;
       }
 
       .photo-rail {
-        bottom: 88px;
-      }
-    }
-
-    @media (max-width: 700px) {
-      .moon {
-        width: 100px;
-        height: 100px;
-        right: 6vw;
-        top: 6vh;
-      }
-
-      .title {
-        top: 7vh;
+        gap: 14px;
       }
 
       .memory-card {
-        flex-basis: 120px;
+        flex-basis: 150px;
       }
 
       .memory-card img {
-        height: 160px;
-      }
-
-      .photo-rail {
-        gap: 10px;
-        width: 95vw;
+        height: 200px;
       }
 
       .hint {
-        bottom: 18px;
-        font-size: 0.88rem;
+        bottom: 250px;
+        font-size: 0.95rem;
       }
 
       .card {
-        padding: 18px;
+        grid-template-columns: 1fr 1fr;
+        padding: 24px;
+      }
+
+      .card-media {
+        min-height: 360px;
       }
     }
   </style>
@@ -568,9 +578,9 @@
       <p>Close your eyes for a moment… now open them and follow the stars.</p>
     </div>
 
-    <div class="photo-rail" id="photoRail"></div>
+    <div class="hint">Tap the stars and let me remind you how beautiful you are. ✨</div>
 
-    <div class="hint">Tap the stars. Hover the memories. Watch the sky. ✨</div>
+    <div class="photo-rail" id="photoRail"></div>
   </main>
 
   <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="cardTitle">
@@ -582,7 +592,7 @@
       </div>
 
       <div class="card-copy">
-        <div class="tag" id="cardTag">A memory</div>
+        <div class="tag" id="cardTag">A little reminder</div>
         <h2 id="cardTitle">Title</h2>
         <p id="cardText">Message</p>
         <div class="footer-note">Under every sky, I still choose you.</div>
@@ -593,167 +603,303 @@
   <script>
     const memories = [
       {
-        title: "The First Spark",
-        tag: "Star One",
-        text: `Hey babygirl,
-
-Come sit with me for a moment.
-
-If I rewind my mind back to the beginning of us, I remember something very clearly... the feeling.
-
-Not fireworks.
-Not something loud or chaotic.
-
-Something softer.
-
-Like when the moon rises quietly and suddenly the whole sky feels different.
-
-That was you for me.
-
-You didn’t crash into my world.
-You gently stepped into it.
-
-And somehow, everything started feeling warmer after that.`,
-        x: 19,
-        y: 42,
-        delay: "0s",
-        image: "images/1.jpg",
-        railCaption: "The beginning of my favorite story."
-      },
-      {
         title: "Your Smile",
-        tag: "Star Two",
+        tag: "Star One",
         text: `Baby…
 
-Your smile is actually unfair.
+Your smile has its own way of changing the atmosphere.
 
-I’m serious.
+It does not arrive loudly.
+It just appears… and suddenly everything feels lighter.
 
-Because one second I can be in my own thoughts, focused on something completely normal… and then you smile at me and suddenly nothing else feels important.
+The room softens.
+My thoughts soften.
+Even time feels a little kinder.
 
-You have this way of lighting up moments without even trying.
+That is what your smile does to me.
 
-And every time I see that smile, my brain just quietly says:
+It turns ordinary moments into something warm.
+Something worth staying in a little longer.
 
-“Yeah… that’s my person.”`,
-        x: 34,
-        y: 64,
+And every single time I see it, I have the same thought:
+
+How lucky am I to be loved by someone who carries that much light in her face?`,
+        x: 18,
+        y: 40,
+        delay: "0s",
+        image: "images/1.jpg",
+        railCaption: "Your smile makes the whole world softer."
+      },
+      {
+        title: "Your Beauty",
+        tag: "Star Two",
+        text: `Let me tell you something slowly, properly, the way I mean it.
+
+You are beautiful.
+
+Not in the rushed way people throw that word around.
+Not in the surface-level way.
+
+I mean the kind of beautiful that lingers.
+
+The kind that people feel before they even understand it.
+The kind that walks into a room gently and still gets noticed.
+
+There is beauty in your face, yes.
+But also in your calm.
+In your eyes.
+In your presence.
+In the way you carry yourself with softness and quiet confidence.
+
+You do not just look beautiful.
+
+You feel beautiful too.`,
+        x: 30,
+        y: 58,
         delay: "0.6s",
         image: "images/2.jpg",
-        railCaption: "You make light look easy."
+        railCaption: "You are beauty in a quiet, unforgettable way."
       },
       {
-        title: "Our Silly Moments",
+        title: "Your Sense of Humour",
         tag: "Star Three",
-        text: `One of my favourite things about us is how easily we can go from serious to completely ridiculous.
+        text: `One of my favourite things about you is how funny you are without even trying.
 
-Like… one minute we’re talking about life, dreams and the future.
+You have this effortless way of making a moment brighter.
 
-And the next minute we’re laughing so hard we can barely breathe.
+Sometimes it is a look.
+Sometimes it is a random comment.
+Sometimes it is your timing being so perfect that I am already laughing before you are even done.
 
-Those moments might look small from the outside.
+And then there is that proper laugh of yours…
+the kind that feels real.
+The kind that makes everything around it feel alive.
 
-But for me?
+Your sense of humour is one of the ways love feels easy with you.
 
-They’re some of the most beautiful parts of loving you.`,
-        x: 49,
-        y: 47,
-        delay: "1.1s",
+Because being with you is not only deep and beautiful.
+
+It is fun.
+It is joy.
+It is me laughing so hard and thinking, yes… this is exactly the kind of love I prayed for.`,
+        x: 43,
+        y: 34,
+        delay: "1s",
         image: "images/3.jpg",
-        railCaption: "The kind of joy I never get tired of."
+        railCaption: "You make joy feel easy."
       },
       {
-        title: "Being With You",
+        title: "How Loving You Are",
         tag: "Star Four",
-        text: `You know something I’ve realized?
+        text: `You love in such a beautiful way.
 
-The place almost never matters.
+It is in the little things.
+The way you care.
+The way you notice.
+The way you hold people gently, even when they do not have the words for what they need.
 
-It could be a restaurant.
-A road trip.
-A quiet couch.
-Or just sitting somewhere doing absolutely nothing.
+There is a tenderness in you that cannot be faked.
 
-Because somehow the moment becomes special the second you’re in it.
+It shows up in your voice.
+In your patience.
+In the way your heart makes room for other people.
 
-You have this way of making ordinary time feel like something worth remembering.`,
-        x: 61,
-        y: 70,
-        delay: "0.9s",
-        image: "images/4.jpg",
-        railCaption: "Us, in the middle of a beautiful day."
-      },
-      {
-        title: "The Way I See You",
-        tag: "Star Five",
-        text: `Let me remind you of something you sometimes forget.
+Being loved by you feels like being handled with care.
 
-You are genuinely one of the most beautiful people I’ve ever known.
+And I hope you always remember this:
 
-Not just your face.
-Not just your smile.
+The love you give is rare.
 
-Your heart.
-Your mind.
-Your way of loving people.
-Your ability to notice things others miss.
-
-You walk into a room quietly… but somehow everyone feels your presence.
-
-And I feel lucky every single day that I get to love that person.`,
-        x: 74,
-        y: 43,
+It is soft without being weak.
+It is steady without being loud.
+It is one of the most beautiful things about you.`,
+        x: 56,
+        y: 56,
         delay: "0.3s",
-        image: "images/5.jpg",
-        railCaption: "Wherever you are feels right."
+        image: "images/4.jpg",
+        railCaption: "Your love feels like warmth."
       },
       {
-        title: "My Favorite Place",
-        tag: "Star Six",
-        text: `If someone asked me where my favourite place in the world is…
+        title: "Your Caring Heart",
+        tag: "Star Five",
+        text: `There is something so beautiful about how caring you are.
 
-I could name a hundred beautiful locations.
+You do not just hear people.
+You feel them.
 
-But the truth?
+You pay attention to the things others miss.
+You carry kindness in such a natural way that I do not even think you realize how deeply it touches people.
 
-My favourite place is wherever you are.
+You make people feel considered.
+You make them feel safe.
+You make them feel like they matter.
 
-Because that’s where I feel calm.
-That’s where I laugh the most.
-That’s where my heart relaxes.`,
-        x: 84,
-        y: 81,
+And baby, that is such a rare gift.
+
+Your caring heart is not small.
+It is not ordinary.
+It is one of the reasons you are so easy to love.
+
+You have a way of making life feel gentler just by being in it.`,
+        x: 69,
+        y: 39,
         delay: "1.2s",
-        image: "images/6.jpg",
-        railCaption: "You make adventure feel gentle."
+        image: "images/5.jpg",
+        railCaption: "Your heart makes people feel held."
       },
       {
-        title: "A Moment I Keep",
+        title: "Your Presence",
+        tag: "Star Six",
+        text: `Your presence does something to me that I do not think I will ever be able to explain properly.
+
+You make places feel different.
+
+Calmer.
+Warmer.
+Safer.
+
+It does not even matter where we are.
+
+The second you are there, something settles in me.
+
+It is like my heart recognizes home before my mind does.
+
+That is your presence.
+
+It is not loud.
+It does not fight for attention.
+It simply arrives… and suddenly I feel better.
+
+You are one of the very few people whose presence feels like peace.`,
+        x: 80,
+        y: 65,
+        delay: "0.8s",
+        image: "images/6.jpg",
+        railCaption: "Your presence feels like peace."
+      },
+      {
+        title: "The Way You Love Life",
         tag: "Star Seven",
-        text: `Some moments don’t need to be big to matter.
+        text: `I love the way life looks on you.
 
-Sometimes it’s just a look.
-A hug.
-A kiss.
-A random laugh.
+The way you smile into moments.
+The way your face opens up when something feels good.
+The way joy sits so naturally on you.
 
-But somehow those little moments stay in my memory longer than anything else.
+There is something so lovely about watching you simply exist.
 
-And every time I replay them, I realize something again:
+Even in the most ordinary moments, you bring life to them.
 
-I really, really love doing life with you.`,
-        x: 67,
-        y: 27,
-        delay: "1.5s",
+You make memories without trying.
+You make moments feel worth keeping.
+
+And I think that is one of the reasons I love being around you so much.
+
+You have this way of reminding me that life can still be light.
+Still be beautiful.
+Still be full of little things worth loving.`,
+        x: 63,
+        y: 24,
+        delay: "1.4s",
         image: "images/7.jpg",
-        railCaption: "One moment. Infinite replay."
-      }
-    ];
+        railCaption: "You make life look beautiful."
+      },
+      {
+        title: "Your Softness",
+        tag: "Star Eight",
+        text: `Your softness is one of the most beautiful things about you.
 
-    const photoMoments = [
-      { image: "images/8.jpg", caption: "Sweet little ordinary moments." },
-      { image: "images/9.jpg", caption: "The kind of day I’d relive." },
-      { image: "images/10.jpg", caption: "You look like peace to me." }
+And I do not mean softness as weakness.
+
+I mean the kind that heals.
+The kind that comforts.
+The kind that makes people breathe easier.
+
+You have such a gentle way about you.
+
+Even when life has given you reasons to harden, there is still tenderness in you.
+Still warmth.
+Still a softness that has survived everything.
+
+That is beautiful to me.
+
+Because the world does not always reward softness.
+
+But you carry it anyway.
+And in my eyes, that makes you extraordinary.`,
+        x: 46,
+        y: 74,
+        delay: "0.9s",
+        image: "images/8.jpg",
+        railCaption: "Your softness is a strength."
+      },
+      {
+        title: "Your Strength",
+        tag: "Star Nine",
+        text: `I hope you know how strong you are.
+
+Not only in the obvious ways.
+Not only in the big moments.
+
+I mean in the quiet ways too.
+
+In how you keep showing up.
+In how you keep loving.
+In how you carry so much and still manage to remain gentle.
+
+That kind of strength moves me.
+
+Because it is not performative.
+It is not loud.
+It is real.
+
+You are strong in the way mountains are strong.
+Steady.
+Grounded.
+Present.
+
+And even on days when you feel unsure of yourself, I need you to know this:
+
+I see your strength clearly.
+I always will.`,
+        x: 32,
+        y: 26,
+        delay: "0.5s",
+        image: "images/9.jpg",
+        railCaption: "Your strength is quiet and beautiful."
+      },
+      {
+        title: "The Way You Are You",
+        tag: "Star Ten",
+        text: `There is no one else like you.
+
+And I do not say that casually.
+
+No one else has your heart.
+Your mannerisms.
+Your laugh.
+Your way of looking at the world.
+Your exact mix of softness, humour, beauty, care and strength.
+
+That is what makes you unforgettable.
+
+You are not lovable because you are trying to be someone special.
+
+You are lovable because you are you.
+
+Exactly you.
+
+And honestly baby, that is my favourite thing of all.
+
+You do not have to become anything else for me to adore you.
+
+You already are one of the most beautiful people I have ever known.`,
+        x: 16,
+        y: 70,
+        delay: "1.1s",
+        image: "images/10.jpg",
+        railCaption: "My favorite thing is simply you."
+      }
     ];
 
     const moonSecret = {
@@ -764,19 +910,20 @@ I really, really love doing life with you.`,
 Because it reminds me of you.
 
 It shows up quietly.
-It doesn’t demand attention.
+It does not demand attention.
 It just shines in its own way.
 
-Even when it’s only a small sliver… it’s still beautiful.
+Even when it is only a small sliver… it is still beautiful.
 
-And that’s the thing about you.
+And that is the thing about you.
 
-You don’t need to be perfect to light up my world.
+You do not need to be loud to be unforgettable.
+You do not need to be perfect to light up my world.
 
 You already do.
 
 Always.`,
-      image: "images/8.jpg"
+      image: "images/1.jpg"
     };
 
     const sky = document.getElementById("sky");
@@ -793,7 +940,7 @@ Always.`,
     const moon = document.getElementById("moon");
     const moonSecretStar = document.getElementById("moonSecretStar");
 
-    function createTinyStars(count = 80) {
+    function createTinyStars(count = 85) {
       for (let i = 0; i < count; i++) {
         const star = document.createElement("span");
         star.style.left = Math.random() * 100 + "%";
@@ -822,7 +969,7 @@ Always.`,
       line.style.top = y1 + "%";
       line.style.width = length + "%";
       line.style.transform = `rotate(${angle}deg)`;
-      line.style.animationDelay = `${0.2 + delayIndex * 0.18}s`;
+      line.style.animationDelay = `${0.2 + delayIndex * 0.15}s`;
 
       parallaxFast.appendChild(line);
     }
@@ -834,10 +981,12 @@ Always.`,
       cardImage.src = memory.image;
       cardImage.alt = memory.title;
       overlay.classList.add("show");
+      document.body.style.overflow = "hidden";
     }
 
     function closeMemory() {
       overlay.classList.remove("show");
+      document.body.style.overflow = "";
     }
 
     function createStars() {
@@ -863,26 +1012,21 @@ Always.`,
     }
 
     function createPhotoRail() {
-      const railItems = [...memories, ...photoMoments];
-      railItems.forEach((item) => {
+      memories.forEach((item) => {
         const card = document.createElement("div");
         card.className = "memory-card";
 
         const img = document.createElement("img");
         img.src = item.image;
-        img.alt = item.caption || item.railCaption || "Memory photo";
+        img.alt = item.railCaption || item.title;
 
         const caption = document.createElement("div");
         caption.className = "caption";
-        caption.textContent = item.railCaption || item.caption || "A little memory.";
+        caption.textContent = item.railCaption;
 
         card.appendChild(img);
         card.appendChild(caption);
-
-        if (item.title && item.text) {
-          card.style.cursor = "pointer";
-          card.addEventListener("click", () => openMemory(item));
-        }
+        card.addEventListener("click", () => openMemory(item));
 
         photoRail.appendChild(card);
       });
@@ -912,7 +1056,7 @@ Always.`,
       const star = document.createElement("div");
       star.className = "shooting-star active";
       star.style.left = Math.random() * 70 + "%";
-      star.style.top = Math.random() * 28 + 8 + "%";
+      star.style.top = Math.random() * 26 + 10 + "%";
       sky.appendChild(star);
       star.addEventListener("animationend", () => star.remove());
     }
@@ -936,12 +1080,19 @@ Always.`,
         targetY = y;
       });
 
+      window.addEventListener("deviceorientation", (e) => {
+        const x = Math.max(-1, Math.min(1, (e.gamma || 0) / 25));
+        const y = Math.max(-1, Math.min(1, (e.beta || 0) / 40));
+        targetX = x;
+        targetY = y * 0.6;
+      });
+
       function animate() {
         currentX += (targetX - currentX) * 0.06;
         currentY += (targetY - currentY) * 0.06;
 
-        parallaxSlow.style.transform = `translate(${currentX * -10}px, ${currentY * -10}px)`;
-        parallaxFast.style.transform = `translate(${currentX * -18}px, ${currentY * -18}px)`;
+        parallaxSlow.style.transform = `translate(${currentX * -8}px, ${currentY * -8}px)`;
+        parallaxFast.style.transform = `translate(${currentX * -14}px, ${currentY * -14}px)`;
 
         requestAnimationFrame(animate);
       }
