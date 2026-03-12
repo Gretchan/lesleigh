@@ -1,408 +1,1090 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>You, Me & The Moon</title>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+  <title>You, Me & The Moon</title>
+  <style>
+    :root {
+      --bg-1: #030714;
+      --bg-2: #081238;
+      --bg-3: #101b58;
+      --text: #f7f4ff;
+      --muted: #c8c3df;
+      --card: rgba(11, 16, 40, 0.84);
+      --border: rgba(255, 255, 255, 0.1);
+      --accent: #ddd5ff;
+      --moon: #f7f2e8;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
 
-<style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-body{
-margin:0;
-font-family:Inter,system-ui;
-background:#020617;
-color:white;
-overflow-x:hidden;
-}
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(143, 184, 255, 0.09), transparent 30%),
+        radial-gradient(circle at 80% 0%, rgba(217, 208, 255, 0.06), transparent 28%),
+        radial-gradient(circle at 50% 100%, rgba(76, 96, 190, 0.12), transparent 35%),
+        linear-gradient(180deg, var(--bg-3), var(--bg-2) 42%, var(--bg-1) 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
 
-.page{
-max-width:900px;
-margin:auto;
-padding:20px;
-}
+    body {
+      position: relative;
+    }
 
-h1{
-text-align:center;
-font-family:Georgia,serif;
-font-size:3rem;
-margin-top:10px;
-}
+    .sky {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-.subtitle{
-text-align:center;
-color:#c9c6ff;
-margin-bottom:25px;
-}
+    .tiny-stars span {
+      position: absolute;
+      display: block;
+      width: 2px;
+      height: 2px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.8);
+      animation: tinyTwinkle 3.8s ease-in-out infinite;
+    }
 
-.cards{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:16px;
-}
+    .shooting-star {
+      position: absolute;
+      width: 180px;
+      height: 2px;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0),
+        rgba(255, 255, 255, 0.98),
+        rgba(255, 255, 255, 0)
+      );
+      border-radius: 999px;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.65);
+      opacity: 0;
+      transform: rotate(-28deg);
+    }
 
-.scratch-card{
-background:#0b1028;
-border-radius:16px;
-overflow:hidden;
-border:1px solid rgba(255,255,255,0.1);
-}
+    .shooting-star.active {
+      animation: shoot 1.5s linear forwards;
+    }
 
-.card-media{
-position:relative;
-width:100%;
-aspect-ratio:1/1;
-overflow:hidden;
-}
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100svh;
+      padding: 18px 16px calc(24px + var(--safe-bottom));
+      width: min(100%, 920px);
+      margin: 0 auto;
+    }
 
-.card-image{
-width:100%;
-height:100%;
-object-fit:cover;
-filter:grayscale(100%) brightness(.85);
-transition:.4s;
-}
+    .hero {
+      position: relative;
+      padding-top: 10px;
+      margin-bottom: 18px;
+    }
 
-.scratch-card.revealed .card-image{
-filter:none;
-}
+    .moon-wrap {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 10px;
+    }
 
-canvas{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-touch-action:none;
-}
+    .moon-button {
+      position: relative;
+      width: 98px;
+      height: 98px;
+      border: 0;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 35%, #fffdf9 0%, var(--moon) 58%, #d9d1c2 100%);
+      box-shadow:
+        0 0 26px rgba(255, 244, 214, 0.22),
+        0 0 70px rgba(255, 244, 214, 0.1);
+      opacity: 0.78;
+      transition: transform 0.25s ease, box-shadow 0.35s ease, opacity 0.35s ease, filter 0.35s ease;
+      cursor: pointer;
+      pointer-events: auto;
+      animation: floatMoon 7s ease-in-out infinite;
+      filter: saturate(0.95);
+    }
 
-.card-content{
-padding:14px;
-}
+    .moon-button::after {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border-radius: 50%;
+      box-shadow:
+        -14px -8px 0 0 rgba(173, 162, 141, 0.12),
+        16px 8px 0 0 rgba(173, 162, 141, 0.08),
+        0 -14px 0 0 rgba(173, 162, 141, 0.06);
+    }
 
-.card-title{
-font-family:Georgia,serif;
-font-size:1.1rem;
-margin-bottom:8px;
-}
+    .moon-button.enabled {
+      opacity: 1;
+      box-shadow:
+        0 0 34px rgba(255, 244, 214, 0.4),
+        0 0 100px rgba(255, 244, 214, 0.16),
+        0 0 150px rgba(255, 244, 214, 0.1);
+      filter: saturate(1.05);
+    }
 
-.card-text{
-font-size:.9rem;
-line-height:1.6;
-opacity:0;
-transition:.4s;
-}
+    .moon-button.enabled:hover,
+    .moon-button.enabled:active {
+      transform: scale(1.04);
+    }
 
-.scratch-card.revealed .card-text{
-opacity:1;
-}
+    .moon-hint {
+      margin-top: 8px;
+      text-align: right;
+      color: rgba(247, 244, 255, 0.72);
+      font-size: 0.82rem;
+      min-height: 18px;
+    }
 
-.card-status{
-font-size:.8rem;
-color:#aaa;
-margin-top:8px;
-}
+    .title {
+      text-align: center;
+      padding: 0 8px;
+    }
 
-</style>
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 7px 13px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--accent);
+      font-size: 0.76rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.1rem, 9vw, 4rem);
+      font-weight: 500;
+      line-height: 1.04;
+      letter-spacing: 0.03em;
+      margin-bottom: 10px;
+      text-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: clamp(0.98rem, 3.7vw, 1.12rem);
+      line-height: 1.5;
+      max-width: 640px;
+      margin: 0 auto 12px;
+    }
+
+    .progress-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 18px auto 0;
+      width: min(100%, 560px);
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      font-size: 0.88rem;
+      color: rgba(247, 244, 255, 0.86);
+    }
+
+    .progress-label {
+      color: var(--muted);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(221, 213, 255, 0.8), rgba(255, 244, 214, 0.95));
+      transition: width 0.35s ease;
+      box-shadow: 0 0 16px rgba(221, 213, 255, 0.35);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 24px;
+      padding-bottom: 10px;
+    }
+
+    .scratch-card {
+      position: relative;
+      border-radius: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(10px);
+      transform: translateY(0);
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      min-height: 250px;
+    }
+
+    .scratch-card:hover,
+    .scratch-card:active {
+      transform: translateY(-4px);
+      border-color: rgba(255, 255, 255, 0.16);
+      box-shadow: 0 20px 44px rgba(0, 0, 0, 0.28);
+    }
+
+    .scratch-card.complete {
+      box-shadow:
+        0 20px 44px rgba(0, 0, 0, 0.28),
+        0 0 24px rgba(255, 244, 214, 0.1);
+    }
+
+    .card-media {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 0.82 / 1;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .card-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(1) brightness(0.8) contrast(1.04) saturate(0.72);
+      transition: filter 0.4s ease;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .scratch-card.revealed .card-image,
+    .scratch-card.complete .card-image {
+      filter: grayscale(0.08) brightness(0.95) contrast(1.02) saturate(0.96);
+    }
+
+    canvas.scratch-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+      cursor: pointer;
+    }
+
+    .card-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 3;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      color: var(--accent);
+      background: rgba(10, 16, 42, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+      pointer-events: none;
+    }
+
+    .card-content {
+      padding: 12px 12px 14px;
+    }
+
+    .card-title {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.04rem;
+      line-height: 1.15;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .card-text {
+      color: #eee9ff;
+      font-size: 0.9rem;
+      line-height: 1.62;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      min-height: 115px;
+      white-space: pre-line;
+    }
+
+    .scratch-card.revealed .card-text,
+    .scratch-card.complete .card-text {
+      opacity: 1;
+    }
+
+    .card-status {
+      margin-top: 10px;
+      font-size: 0.77rem;
+      color: rgba(247, 244, 255, 0.66);
+    }
+
+    .card-status.done {
+      color: rgba(255, 244, 214, 0.9);
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(2, 4, 12, 0.74);
+      backdrop-filter: blur(10px);
+      z-index: 50;
+    }
+
+    .overlay.show {
+      display: flex;
+      animation: fadeIn 0.22s ease;
+    }
+
+    .modal {
+      width: min(94vw, 680px);
+      max-height: min(88svh, 860px);
+      overflow: auto;
+      background: rgba(11, 16, 40, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.46);
+      padding: 18px;
+      position: relative;
+    }
+
+    .close-btn {
+      position: sticky;
+      top: 0;
+      margin-left: auto;
+      display: block;
+      width: 40px;
+      height: 40px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+      font-size: 1.05rem;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .close-btn:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .modal-tag {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--accent);
+      font-size: 0.82rem;
+      letter-spacing: 0.03em;
+    }
+
+    .modal h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.65rem, 6vw, 2.5rem);
+      font-weight: 500;
+      line-height: 1.08;
+      margin-bottom: 12px;
+    }
+
+    .modal p {
+      color: #efeaff;
+      font-size: 1rem;
+      line-height: 1.76;
+      white-space: pre-line;
+    }
+
+    .modal-footer {
+      margin-top: 16px;
+      font-size: 0.9rem;
+      color: #bcb5d8;
+    }
+
+    .sparkle {
+      position: fixed;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff 0%, #fff6d8 60%, transparent 72%);
+      pointer-events: none;
+      z-index: 100;
+      animation: sparkleBurst 650ms ease-out forwards;
+    }
+
+    @keyframes tinyTwinkle {
+      0%, 100% { opacity: 0.24; }
+      50% { opacity: 0.98; }
+    }
+
+    @keyframes shoot {
+      0% {
+        opacity: 0;
+        transform: translate3d(0, 0, 0) rotate(-28deg) scaleX(0.2);
+      }
+      12% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate3d(420px, 240px, 0) rotate(-28deg) scaleX(1);
+      }
+    }
+
+    @keyframes floatMoon {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes sparkleBurst {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(var(--dx), var(--dy)) scale(0.2);
+      }
+    }
+
+    @media (min-width: 700px) {
+      .page {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .moon-button {
+        width: 126px;
+        height: 126px;
+      }
+
+      .cards {
+        gap: 16px;
+      }
+
+      .scratch-card {
+        min-height: 340px;
+      }
+
+      .card-content {
+        padding: 14px 14px 16px;
+      }
+
+      .card-title {
+        font-size: 1.18rem;
+      }
+
+      .card-text {
+        font-size: 0.95rem;
+        min-height: 132px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .moon-wrap {
+        justify-content: center;
+      }
+
+      .moon-hint {
+        text-align: center;
+      }
+    }
+  </style>
 </head>
-
-
 <body>
+  <div class="sky" id="sky">
+    <div class="tiny-stars" id="tinyStars"></div>
+  </div>
 
-<div class="page">
+  <main class="page">
+    <section class="hero">
+      <div class="moon-wrap">
+        <div>
+          <button class="moon-button" id="moonButton" aria-label="Moon hidden message"></button>
+          <div class="moon-hint" id="moonHint">Reveal all 10 cards to wake the moon.</div>
+        </div>
+      </div>
 
-<h1>You, Me & The Moon</h1>
+      <div class="title">
+        <div class="eyebrow">For Lesleigh</div>
+        <h1>You, Me &amp; The Moon</h1>
+        <p class="subtitle">
+          Some things are worth uncovering slowly…
+          scratch the memories and let me remind you how beautiful you are.
+        </p>
 
-<p class="subtitle">
-Scratch the memories and uncover why you are so beautiful to me.
-</p>
+        <div class="progress-wrap">
+          <div class="progress-top">
+            <span class="progress-label">Moonlight revealed</span>
+            <span id="progressText">0 / 10</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<section class="cards" id="cards"></section>
+    <section class="cards" id="cards"></section>
+  </main>
 
-</div>
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <button class="close-btn" id="closeBtn" aria-label="Close">✕</button>
+      <div class="modal-tag">Moonlight note</div>
+      <h2 id="modalTitle">The Moon Reminds Me of You</h2>
+      <p id="modalText"></p>
+      <div class="modal-footer">Even when I cannot see all of you, I still know you are beautiful.</div>
+    </div>
+  </div>
 
+  <script>
+    const compliments = [
+      {
+        title: "Your Smile",
+        tag: "Card One",
+        image: "images/1.jpg",
+        text: `Baby…
 
-<script>
+Your smile has its own way of changing the atmosphere.
 
-const compliments = [
+It does not arrive loudly.
+It just appears… and suddenly everything feels lighter.
 
-{
-title:"Your Smile",
-image:"images/1.jpg",
-text:`Your smile changes the atmosphere of a room.
+The room softens.
+My thoughts soften.
+Even time feels a little kinder.
 
-It doesn't arrive loudly.
-It simply appears…
+That is what your smile does to me.
 
-and suddenly everything feels lighter.`
-},
+It turns ordinary moments into something warm.
+Something worth staying in a little longer.`
+      },
+      {
+        title: "Your Beauty",
+        tag: "Card Two",
+        image: "images/2.jpg",
+        text: `You are beautiful in the kind of way that lingers.
 
-{
-title:"Your Beauty",
-image:"images/2.jpg",
-text:`Your beauty isn't loud.
+Not only in your face,
+though goodness knows I could stare at that forever.
 
-It’s calm, natural and effortless.
+I mean in your eyes.
+Your calm.
+Your energy.
+The way your presence says so much without making noise.
 
-The kind that lingers in someone's mind long after the moment ends.`
-},
+You do not just look beautiful.
 
-{
-title:"Your Humour",
-image:"images/3.jpg",
-text:`Your humour is one of my favourite things.
+You feel beautiful too.
 
-Sometimes it's just a look,
-sometimes your timing,
-but somehow you always make joy feel easy.`
-},
+And that kind of beauty stays with people.`
+      },
+      {
+        title: "Your Sense of Humour",
+        tag: "Card Three",
+        image: "images/3.jpg",
+        text: `One of my favourite things about you is how funny you are without forcing it.
 
-{
-title:"Your Love",
-image:"images/4.jpg",
-text:`You love in such a soft and steady way.
+Sometimes it is a look.
+Sometimes it is your timing.
+Sometimes it is the simplest thing and somehow I am already gone.
 
-Being loved by you feels like being handled with care.`
-},
+Your humour makes love feel light.
 
-{
-title:"Your Caring Heart",
-image:"images/5.jpg",
-text:`You notice things others miss.
+It makes the hard days softer.
+It makes the ordinary days brighter.
 
+You make joy feel easy.`
+      },
+      {
+        title: "How Loving You Are",
+        tag: "Card Four",
+        image: "images/4.jpg",
+        text: `You love in such a beautiful way.
+
+It shows up in the little things.
+In your tenderness.
+In your patience.
+In the way your heart makes room for people.
+
+Being loved by you feels like being handled with care.
+
+Your love is soft without being weak.
+Steady without needing to be loud.
+
+It is one of the most beautiful things about you.`
+      },
+      {
+        title: "Your Caring Heart",
+        tag: "Card Five",
+        image: "images/5.jpg",
+        text: `There is something so rare about how caring you are.
+
+You do not only hear people.
+You feel them.
+
+You notice what others miss.
 You make people feel seen.
+You make them feel considered.
+You make them feel like they matter.
 
-That kind of heart is rare.`
-},
+That kind of heart is not ordinary.
 
-{
-title:"Your Presence",
-image:"images/6.jpg",
-text:`Your presence brings peace.
+Your care changes the atmosphere around you.`
+      },
+      {
+        title: "Your Presence",
+        tag: "Card Six",
+        image: "images/6.jpg",
+        text: `Your presence feels like peace to me.
 
-When you're near, things feel calmer.
+It does not matter where we are.
+The second you are there, something settles in me.
 
-Like home.`
-},
+The room feels calmer.
+My heart feels softer.
+Everything feels a little more okay.
 
-{
-title:"Your Joy",
-image:"images/7.jpg",
-text:`Joy looks good on you.
+That is such a gift.
 
-It fits you naturally,
-like it was always meant to live there.`
-},
+You are one of the very few people whose presence feels like home.`
+      },
+      {
+        title: "The Way You Carry Joy",
+        tag: "Card Seven",
+        image: "images/7.jpg",
+        text: `I love the way joy looks on you.
 
-{
-title:"Your Softness",
-image:"images/8.jpg",
-text:`Your softness is powerful.
+The way your face opens up.
+The way your whole energy shifts when a moment feels good.
+The way happiness seems to fit you so naturally.
 
-It heals more than you realise.`
-},
+You make life look beautiful.
 
-{
-title:"Your Strength",
-image:"images/9.jpg",
-text:`You are strong in quiet ways.
-
-The kind of strength people feel even when you say nothing.`
-},
-
-{
-title:"You",
-image:"images/10.jpg",
-text:`You are lovable simply because you are you.
-
-And honestly…
-
-that’s my favourite thing about you.`
-}
-
-];
-
-
-const cardsEl=document.getElementById("cards");
-const state={completed:new Set()};
-
-
-
-function createCard(item,index){
-
-const card=document.createElement("article");
-card.className="scratch-card";
-
-card.innerHTML=`
-
-<div class="card-media">
-
-<img class="card-image" src="${item.image}" />
-
-<canvas></canvas>
-
-</div>
-
-<div class="card-content">
-
-<h3 class="card-title">${item.title}</h3>
-
-<p class="card-text">${item.text}</p>
-
-<div class="card-status">Scratch to reveal</div>
-
-</div>
-
-`;
-
-cardsEl.appendChild(card);
-
-buildScratch(card,index);
-
-}
-
-
-
-function buildScratch(card,index){
-
-const canvas=card.querySelector("canvas");
-const media=card.querySelector(".card-media");
-
-const ctx=canvas.getContext("2d",{willReadFrequently:true});
-
-let drawing=false;
-let locked=false;
-
-function resize(){
-
-if(locked)return;
-
-const rect=media.getBoundingClientRect();
-
-canvas.width=rect.width;
-canvas.height=rect.height;
-
-ctx.fillStyle="#cfd4ff";
-ctx.fillRect(0,0,canvas.width,canvas.height);
-
-for(let i=0;i<120;i++){
-
-ctx.beginPath();
-ctx.arc(
-Math.random()*canvas.width,
-Math.random()*canvas.height,
-Math.random()*2,
-0,
-Math.PI*2
-);
-ctx.fillStyle="white";
-ctx.fill();
-
-}
-
-}
-
-function point(e){
-
-const rect=canvas.getBoundingClientRect();
-const t=e.touches?e.touches[0]:e;
-
-return{
-x:t.clientX-rect.left,
-y:t.clientY-rect.top
-};
-
-}
-
-function scratch(x,y){
-
-ctx.globalCompositeOperation="destination-out";
-
-ctx.beginPath();
-ctx.arc(x,y,35,0,Math.PI*2);  // larger brush
-ctx.fill();
-
-}
-
-function revealed(){
-
-const pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;
-
-let transparent=0;
-let total=pixels.length/4;
-
-for(let i=3;i<pixels.length;i+=4){
-
-if(pixels[i]<20)transparent++;
-
-}
-
-return transparent/total;
-
-}
-
-
-
-function handle(e){
-
-if(locked)return;
-
-const p=point(e);
-
-scratch(p.x,p.y);
-
-const r=revealed();
-
-if(r>.15){
-
-locked=true;
-
-card.classList.add("revealed");
-
-canvas.style.display="none";
-
-state.completed.add(index);
-
-}
-
-}
-
-
-
-function start(e){
-
-drawing=true;
-handle(e);
-e.preventDefault();
-
-}
-
-function move(e){
-
-if(!drawing)return;
-handle(e);
-e.preventDefault();
-
-}
-
-function end(){drawing=false;}
-
-canvas.addEventListener("pointerdown",start);
-canvas.addEventListener("pointermove",move);
-window.addEventListener("pointerup",end);
-
-canvas.addEventListener("touchstart",start);
-canvas.addEventListener("touchmove",move);
-window.addEventListener("touchend",end);
-
-resize();
-
-}
-
-
-
-compliments.forEach((item,i)=>createCard(item,i));
-
-</script>
-
+You make moments feel worth keeping.
+
+And I think that is one of the reasons I love being around you so much.`
+      },
+      {
+        title: "Your Softness",
+        tag: "Card Eight",
+        image: "images/8.jpg",
+        text: `Your softness is one of the most beautiful things about you.
+
+Not softness as weakness.
+
+Softness as comfort.
+Softness as healing.
+Softness as the kind of presence that makes people breathe easier.
+
+Even when life gives people reasons to harden,
+you still carry warmth.
+
+That is powerful to me.
+
+That is beautiful to me.`
+      },
+      {
+        title: "Your Strength",
+        tag: "Card Nine",
+        image: "images/9.jpg",
+        text: `I hope you know how strong you are.
+
+Not only in the big dramatic moments.
+In the quiet ones too.
+
+In how you keep showing up.
+In how you keep loving.
+In how you carry so much and still remain gentle.
+
+That kind of strength is not loud.
+It is real.
+
+And I see it in you clearly.`
+      },
+      {
+        title: "The Way You Are You",
+        tag: "Card Ten",
+        image: "images/10.jpg",
+        text: `There is no one else like you.
+
+No one else with your heart,
+your humour,
+your softness,
+your beauty,
+your exact way of being in the world.
+
+You are lovable not because you are trying to be extraordinary.
+
+You are lovable because you are you.
+
+And honestly baby…
+that is my favourite thing of all.`
+      }
+    ];
+
+    const moonMessage = `You know why I love the moon so much?
+
+Because it reminds me of you.
+
+It shows up quietly.
+It does not demand attention.
+It just shines in its own way.
+
+Even when it is only a small sliver… it is still beautiful.
+
+And that is the thing about you.
+
+You do not need to be loud to be unforgettable.
+You do not need to be perfect to light up my world.
+
+You already do.
+
+Always.`;
+
+    const cardsEl = document.getElementById("cards");
+    const progressText = document.getElementById("progressText");
+    const progressFill = document.getElementById("progressFill");
+    const moonButton = document.getElementById("moonButton");
+    const moonHint = document.getElementById("moonHint");
+    const overlay = document.getElementById("overlay");
+    const closeBtn = document.getElementById("closeBtn");
+    const modalText = document.getElementById("modalText");
+    const sky = document.getElementById("sky");
+    const tinyStars = document.getElementById("tinyStars");
+
+    const state = {
+      completed: new Set(),
+      cards: []
+    };
+
+    function createTinyStars(count = 85) {
+      for (let i = 0; i < count; i++) {
+        const star = document.createElement("span");
+        star.style.left = Math.random() * 100 + "%";
+        star.style.top = Math.random() * 100 + "%";
+        star.style.opacity = String(Math.random());
+        star.style.animationDelay = (Math.random() * 3).toFixed(2) + "s";
+        star.style.transform = `scale(${(Math.random() * 1.6 + 0.4).toFixed(2)})`;
+        tinyStars.appendChild(star);
+      }
+    }
+
+    function spawnShootingStar() {
+      const star = document.createElement("div");
+      star.className = "shooting-star active";
+      star.style.left = Math.random() * 70 + "%";
+      star.style.top = Math.random() * 26 + 8 + "%";
+      sky.appendChild(star);
+      star.addEventListener("animationend", () => star.remove());
+    }
+
+    function randomAmbientShootingStars() {
+      spawnShootingStar();
+      const next = 4500 + Math.random() * 5000;
+      setTimeout(randomAmbientShootingStars, next);
+    }
+
+    function createSparkles(x, y, count = 8) {
+      for (let i = 0; i < count; i++) {
+        const sparkle = document.createElement("div");
+        sparkle.className = "sparkle";
+
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 14 + Math.random() * 28;
+        const dx = Math.cos(angle) * distance + "px";
+        const dy = Math.sin(angle) * distance + "px";
+
+        sparkle.style.left = x + "px";
+        sparkle.style.top = y + "px";
+        sparkle.style.setProperty("--dx", dx);
+        sparkle.style.setProperty("--dy", dy);
+
+        document.body.appendChild(sparkle);
+        sparkle.addEventListener("animationend", () => sparkle.remove());
+      }
+    }
+
+    function updateProgress() {
+      const completed = state.completed.size;
+      const total = compliments.length;
+      const percent = (completed / total) * 100;
+
+      progressText.textContent = `${completed} / ${total}`;
+      progressFill.style.width = `${percent}%`;
+
+      const glowA = 0.22 + percent / 450;
+      const glowB = 0.10 + percent / 700;
+      moonButton.style.boxShadow = `
+        0 0 26px rgba(255, 244, 214, ${glowA}),
+        0 0 90px rgba(255, 244, 214, ${glowB})
+      `;
+      moonButton.style.opacity = `${0.78 + percent / 500}`;
+
+      if (completed === total) {
+        moonButton.classList.add("enabled");
+        moonHint.textContent = "The moon is awake now. Tap it. 🌙";
+      } else {
+        moonHint.textContent = "Reveal all 10 cards to wake the moon.";
+      }
+    }
+
+    function markComplete(index, cardEl) {
+      if (state.completed.has(index)) return;
+      state.completed.add(index);
+      cardEl.classList.add("complete");
+
+      const status = cardEl.querySelector(".card-status");
+      if (status) {
+        status.textContent = "Revealed ✨";
+        status.classList.add("done");
+      }
+
+      if (navigator.vibrate) {
+        navigator.vibrate(18);
+      }
+
+      updateProgress();
+      spawnShootingStar();
+    }
+
+    function buildScratchCanvas(cardEl, index) {
+      const canvas = cardEl.querySelector("canvas");
+      const media = cardEl.querySelector(".card-media");
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+      let drawing = false;
+      let revealed = false;
+      let completed = false;
+      let locked = false;
+
+      function resizeCanvas() {
+        if (locked) return;
+
+        const dpr = Math.max(window.devicePixelRatio || 1, 1);
+        const rect = media.getBoundingClientRect();
+
+        canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+        canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+        canvas.style.width = rect.width + "px";
+        canvas.style.height = rect.height + "px";
+
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(dpr, dpr);
+
+        const w = rect.width;
+        const h = rect.height;
+
+        const gradient = ctx.createLinearGradient(0, 0, w, h);
+        gradient.addColorStop(0, "rgba(233, 229, 255, 0.96)");
+        gradient.addColorStop(0.5, "rgba(189, 204, 255, 0.93)");
+        gradient.addColorStop(1, "rgba(212, 200, 255, 0.96)");
+
+        ctx.globalCompositeOperation = "source-over";
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, w, h);
+
+        for (let i = 0; i < 140; i++) {
+          const x = Math.random() * w;
+          const y = Math.random() * h;
+          const r = Math.random() * 1.6 + 0.4;
+          ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.45 + 0.16})`;
+          ctx.beginPath();
+          ctx.arc(x, y, r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.fillStyle = "rgba(255,255,255,0.16)";
+        ctx.font = "600 14px Inter, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("Scratch me", w / 2, h / 2);
+      }
+
+      function getPoint(event) {
+        const rect = canvas.getBoundingClientRect();
+        const touch = event.touches ? event.touches[0] : event;
+        return {
+          x: touch.clientX - rect.left,
+          y: touch.clientY - rect.top,
+          cx: touch.clientX,
+          cy: touch.clientY
+        };
+      }
+
+      function scratchAt(x, y) {
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.beginPath();
+        ctx.arc(x, y, 30, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function calculateRevealed() {
+        const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        let transparent = 0;
+        const total = pixels.length / 4;
+
+        for (let i = 3; i < pixels.length; i += 4) {
+          if (pixels[i] < 20) transparent++;
+        }
+
+        return transparent / total;
+      }
+
+      function lockCardFully() {
+        locked = true;
+        canvas.style.display = "none";
+        canvas.style.pointerEvents = "none";
+        cardEl.classList.add("revealed", "complete");
+      }
+
+      function handleScratch(point) {
+        if (locked) return;
+
+        scratchAt(point.x, point.y);
+        createSparkles(point.cx, point.cy, 3);
+
+        const ratio = calculateRevealed();
+
+        if (ratio > 0.12 && !revealed) {
+          revealed = true;
+          cardEl.classList.add("revealed");
+        }
+
+        if (ratio > 0.22 && !completed) {
+          completed = true;
+          markComplete(index, cardEl);
+          lockCardFully();
+        }
+      }
+
+      function start(event) {
+        if (locked) return;
+        drawing = true;
+        const point = getPoint(event);
+        handleScratch(point);
+        event.preventDefault();
+      }
+
+      function move(event) {
+        if (!drawing || locked) return;
+        const point = getPoint(event);
+        handleScratch(point);
+        event.preventDefault();
+      }
+
+      function end() {
+        drawing = false;
+      }
+
+      canvas.addEventListener("pointerdown", start, { passive: false });
+      canvas.addEventListener("pointermove", move, { passive: false });
+      window.addEventListener("pointerup", end);
+
+      canvas.addEventListener("touchstart", start, { passive: false });
+      canvas.addEventListener("touchmove", move, { passive: false });
+      window.addEventListener("touchend", end);
+
+      resizeCanvas();
+      return { resizeCanvas };
+    }
+
+    function createCard(item, index) {
+      const card = document.createElement("article");
+      card.className = "scratch-card";
+      card.innerHTML = `
+        <div class="card-media">
+          <img class="card-image" src="${item.image}" alt="${item.title}" />
+          <div class="card-badge">${item.tag}</div>
+          <canvas class="scratch-layer" aria-label="Scratch to reveal"></canvas>
+        </div>
+        <div class="card-content">
+          <h3 class="card-title">${item.title}</h3>
+          <p class="card-text">${item.text}</p>
+          <div class="card-status">Scratch the moon dust away ✨</div>
+        </div>
+      `;
+      cardsEl.appendChild(card);
+
+      const scratch = buildScratchCanvas(card, index);
+      state.cards.push(scratch);
+    }
+
+    function buildCards() {
+      compliments.forEach((item, index) => createCard(item, index));
+    }
+
+    function openMoonMessage() {
+      if (state.completed.size !== compliments.length) return;
+      modalText.textContent = moonMessage;
+      overlay.classList.add("show");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeMoonMessage() {
+      overlay.classList.remove("show");
+      document.body.style.overflow = "";
+    }
+
+    moonButton.addEventListener("click", openMoonMessage);
+    closeBtn.addEventListener("click", closeMoonMessage);
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeMoonMessage();
+    });
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeMoonMessage();
+    });
+
+    window.addEventListener("resize", () => {
+      state.cards.forEach((item) => item.resizeCanvas());
+    });
+
+    createTinyStars();
+    buildCards();
+    updateProgress();
+    setTimeout(randomAmbientShootingStars, 1600);
+  </script>
 </body>
 </html>
