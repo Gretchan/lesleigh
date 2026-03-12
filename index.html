@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Little Universe</title>
+  <style>
+    :root {
+      --bg-1: #050816;
+      --bg-2: #0a1030;
+      --moon: #f5f3ea;
+      --moon-glow: rgba(255, 244, 214, 0.35);
+      --star: #fff6d6;
+      --text: #f7f4ff;
+      --muted: #c7c2dd;
+      --card: rgba(14, 19, 48, 0.78);
+      --border: rgba(255, 255, 255, 0.12);
+      --accent: #cbbdff;
+      --accent-2: #90b7ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      overflow: hidden;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(144, 183, 255, 0.08), transparent 30%),
+        radial-gradient(circle at bottom, rgba(203, 189, 255, 0.08), transparent 25%),
+        linear-gradient(180deg, var(--bg-2), var(--bg-1));
+    }
+
+    .sky {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .moon {
+      position: absolute;
+      top: 8vh;
+      right: 8vw;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fffdf7 0%, var(--moon) 55%, #d8d0bf 100%);
+      box-shadow: 0 0 30px var(--moon-glow), 0 0 100px rgba(255, 244, 214, 0.18);
+      animation: floatMoon 6s ease-in-out infinite;
+      z-index: 1;
+    }
+
+    .moon::after {
+      content: "";
+      position: absolute;
+      inset: 14px;
+      border-radius: 50%;
+      box-shadow:
+        -20px -12px 0 0 rgba(180, 170, 150, 0.16),
+        18px 10px 0 0 rgba(180, 170, 150, 0.12),
+        5px -18px 0 0 rgba(180, 170, 150, 0.08);
+      opacity: 0.8;
+    }
+
+    .title {
+      position: absolute;
+      left: 50%;
+      top: 8vh;
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 2;
+      padding: 0 20px;
+    }
+
+    .title h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 4vw, 3.6rem);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      text-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .title p {
+      color: var(--muted);
+      font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+    }
+
+    .hint {
+      position: absolute;
+      left: 50%;
+      bottom: 5vh;
+      transform: translateX(-50%);
+      color: rgba(247, 244, 255, 0.74);
+      font-size: 0.95rem;
+      letter-spacing: 0.02em;
+      z-index: 2;
+      animation: pulseText 2.8s ease-in-out infinite;
+      text-align: center;
+      padding: 0 16px;
+    }
+
+    .star {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle, white 0%, var(--star) 45%, rgba(255, 246, 214, 0.2) 70%, transparent 72%);
+      box-shadow: 0 0 10px rgba(255, 246, 214, 0.8), 0 0 20px rgba(255, 246, 214, 0.28);
+      cursor: pointer;
+      animation: twinkle 2.4s ease-in-out infinite;
+      transition: transform 0.2s ease, filter 0.2s ease;
+      z-index: 2;
+    }
+
+    .star:hover,
+    .star:focus-visible {
+      transform: scale(1.35);
+      filter: brightness(1.2);
+      outline: none;
+    }
+
+    .star::before,
+    .star::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.65);
+      border-radius: 999px;
+    }
+
+    .star::before {
+      width: 2px;
+      height: 24px;
+    }
+
+    .star::after {
+      width: 24px;
+      height: 2px;
+    }
+
+    .star.special {
+      width: 22px;
+      height: 22px;
+      box-shadow: 0 0 14px rgba(203, 189, 255, 0.95), 0 0 28px rgba(144, 183, 255, 0.45);
+      background: radial-gradient(circle, #fff 0%, #e9e2ff 42%, rgba(144, 183, 255, 0.28) 70%, transparent 74%);
+    }
+
+    .line {
+      position: absolute;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.18), rgba(255,255,255,0.02));
+      transform-origin: left center;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 4, 12, 0.62);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 10;
+      backdrop-filter: blur(8px);
+    }
+
+    .overlay.show {
+      display: flex;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .card {
+      width: min(92vw, 520px);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px 24px 22px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      position: relative;
+    }
+
+    .card h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.8rem;
+      font-weight: 500;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .card p {
+      font-size: 1.04rem;
+      line-height: 1.7;
+      color: #efeaff;
+      white-space: pre-line;
+    }
+
+    .card .tag {
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      color: var(--accent);
+      font-size: 0.85rem;
+      letter-spacing: 0.03em;
+    }
+
+    .close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      border: 0;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.1rem;
+      color: white;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .close:hover {
+      background: rgba(255,255,255,0.16);
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: #bcb5d8;
+      font-size: 0.9rem;
+    }
+
+    .tiny-stars span {
+      position: absolute;
+      display: block;
+      width: 2px;
+      height: 2px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.75);
+      animation: tinyTwinkle 3.2s ease-in-out infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.55; transform: scale(0.95); }
+      50% { opacity: 1; transform: scale(1.1); }
+    }
+
+    @keyframes tinyTwinkle {
+      0%, 100% { opacity: 0.25; }
+      50% { opacity: 0.95; }
+    }
+
+    @keyframes floatMoon {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+
+    @keyframes pulseText {
+      0%, 100% { opacity: 0.56; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @media (max-width: 700px) {
+      .moon {
+        width: 96px;
+        height: 96px;
+        right: 6vw;
+        top: 6vh;
+      }
+
+      .card {
+        padding: 26px 18px 20px;
+      }
+
+      .card h2 {
+        font-size: 1.5rem;
+      }
+
+      .star {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="sky" id="sky">
+    <div class="tiny-stars" id="tinyStars"></div>
+    <div class="moon"></div>
+
+    <div class="title">
+      <h1>Our Little Universe</h1>
+      <p>Every star holds a piece of you and me.</p>
+    </div>
+
+    <div class="hint">Tap the stars ✨</div>
+  </main>
+
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="cardTitle">
+    <div class="card">
+      <button class="close" id="closeBtn" aria-label="Close">✕</button>
+      <div class="tag" id="cardTag">A memory</div>
+      <h2 id="cardTitle">Title</h2>
+      <p id="cardText">Message</p>
+      <div class="footer-note">You make this universe feel softer.</div>
+    </div>
+  </div>
+
+  <script>
+    const memories = [
+      {
+        title: "The First Pull",
+        tag: "Star One",
+        text: "The first time you really caught my attention, something shifted.\n\nIt felt small in the moment, but looking back, that was the start of my universe changing.",
+        x: 18,
+        y: 30,
+        delay: "0s"
+      },
+      {
+        title: "Your Smile",
+        tag: "Star Two",
+        text: "There are smiles, and then there is yours.\n\nYours does this unfair thing where it makes everything around it feel lighter.",
+        x: 33,
+        y: 52,
+        delay: "0.6s"
+      },
+      {
+        title: "The Quiet Moments",
+        tag: "Star Three",
+        text: "I love the loud, beautiful moments with you.\nBut I think I love the quiet ones just as much — when it's just your presence, and somehow that's enough.",
+        x: 48,
+        y: 35,
+        delay: "1.2s"
+      },
+      {
+        title: "My Favorite Place",
+        tag: "Star Four",
+        text: "I don't think my favorite place is a city or a room anymore.\n\nI think it's just wherever you are.",
+        x: 60,
+        y: 58,
+        delay: "0.9s"
+      },
+      {
+        title: "The Way You Feel",
+        tag: "Star Five",
+        text: "You feel like peace and excitement at the same time.\n\nLike the moon when the whole sky goes quiet just to let it shine.",
+        x: 73,
+        y: 28,
+        delay: "0.3s"
+      },
+      {
+        title: "A Little Truth",
+        tag: "Hidden Star",
+        text: "No matter how wide this universe is,\nI think I would still find you.\n\nAnd I would still choose you.\nAgain and again.",
+        x: 83,
+        y: 68,
+        delay: "1.5s",
+        special: true
+      }
+    ];
+
+    const sky = document.getElementById("sky");
+    const overlay = document.getElementById("overlay");
+    const closeBtn = document.getElementById("closeBtn");
+    const cardTitle = document.getElementById("cardTitle");
+    const cardText = document.getElementById("cardText");
+    const cardTag = document.getElementById("cardTag");
+    const tinyStars = document.getElementById("tinyStars");
+
+    function createTinyStars(count = 65) {
+      for (let i = 0; i < count; i++) {
+        const star = document.createElement("span");
+        star.style.left = Math.random() * 100 + "%";
+        star.style.top = Math.random() * 100 + "%";
+        star.style.opacity = String(Math.random());
+        star.style.animationDelay = (Math.random() * 3).toFixed(2) + "s";
+        star.style.transform = `scale(${(Math.random() * 1.4 + 0.5).toFixed(2)})`;
+        tinyStars.appendChild(star);
+      }
+    }
+
+    function drawLine(a, b) {
+      const line = document.createElement("div");
+      line.className = "line";
+      const x1 = a.x;
+      const y1 = a.y;
+      const x2 = b.x;
+      const y2 = b.y;
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const length = Math.sqrt(dx * dx + dy * dy);
+      const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+      line.style.left = x1 + "%";
+      line.style.top = y1 + "%";
+      line.style.width = length + "%";
+      line.style.transform = `rotate(${angle}deg)`;
+      sky.appendChild(line);
+    }
+
+    function openMemory(memory) {
+      cardTitle.textContent = memory.title;
+      cardText.textContent = memory.text;
+      cardTag.textContent = memory.tag;
+      overlay.classList.add("show");
+    }
+
+    function closeMemory() {
+      overlay.classList.remove("show");
+    }
+
+    function createStars() {
+      memories.forEach((memory) => {
+        const star = document.createElement("button");
+        star.className = memory.special ? "star special" : "star";
+        star.style.left = memory.x + "%";
+        star.style.top = memory.y + "%";
+        star.style.animationDelay = memory.delay;
+        star.setAttribute("aria-label", memory.title);
+        star.addEventListener("click", () => openMemory(memory));
+        sky.appendChild(star);
+      });
+
+      for (let i = 0; i < memories.length - 1; i++) {
+        drawLine(memories[i], memories[i + 1]);
+      }
+    }
+
+    closeBtn.addEventListener("click", closeMemory);
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeMemory();
+    });
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeMemory();
+    });
+
+    createTinyStars();
+    createStars();
+  </script>
+</body>
+</html>
